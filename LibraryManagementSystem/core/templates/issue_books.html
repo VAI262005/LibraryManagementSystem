@@ -1,0 +1,105 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<style>
+    .badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: white;
+        font-size: 12px;
+    }
+
+    .issued {
+        background-color: #f39c12;
+    }
+
+    .returned {
+        background-color: #27ae60;
+    }
+
+    .btn {
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        color: white;
+        font-size: 13px;
+    }
+
+    .return-btn {
+        background-color: #e74c3c;
+    }
+
+    .disabled {
+        background-color: #bdc3c7;
+        pointer-events: none;
+    }
+</style>
+
+<h1>Issued Books</h1>
+
+<table border="1" cellpadding="10" cellspacing="0">
+
+    <tr>
+        <th>ID</th>
+        <th>Book Name</th>
+        <th>Member Name</th>
+        <th>Issue Date</th>
+        <th>Return Date</th>
+        <th>Status</th>
+        <th>Fine</th>
+        <th>Action</th>
+    </tr>
+
+    {% for issue in issued_books %}
+    <tr>
+        <td>{{ issue.id }}</td>
+        <td>{{ issue.book.title }}</td>
+        <td>{{ issue.member.name }}</td>
+        <td>{{ issue.issue_date }}</td>
+
+        <td>
+            {% if issue.return_date %}
+                {{ issue.return_date }}
+            {% else %}
+                ---
+            {% endif %}
+        </td>
+
+        <!-- STATUS -->
+        <td>
+            {% if issue.return_date %}
+                <span class="badge returned">Returned</span>
+            {% else %}
+                <span class="badge issued">Issued</span>
+            {% endif %}
+        </td>
+
+        <!-- FINE -->
+        <td>
+            ₹{{ issue.fine|default:0 }}
+        </td>
+
+        <!-- ACTION -->
+        <td>
+            {% if not issue.return_date %}
+                <a class="btn return-btn"
+                   href="{% url 'return-book' issue.id %}">
+                    Return Book
+                </a>
+            {% else %}
+                <span class="btn disabled">Completed</span>
+            {% endif %}
+        </td>
+
+    </tr>
+
+    {% empty %}
+    <tr>
+        <td colspan="8">No books have been issued.</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}

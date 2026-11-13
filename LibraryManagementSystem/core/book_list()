@@ -1,0 +1,20 @@
+from django.shortcuts import render, redirect
+from .models import Book
+
+def add_book(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        author = request.POST['author']
+        isbn = request.POST['isbn']
+        quantity = request.POST['quantity']
+
+        Book.objects.create(
+            title=title,
+            author=author,
+            isbn=isbn,
+            quantity=quantity
+        )
+
+        return redirect('books-page')
+
+    return render(request, 'add_book.html')
